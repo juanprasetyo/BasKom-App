@@ -1,0 +1,61 @@
+name: Continous Integration Baskom App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  frontend-test:
+    name: Frontend Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./baskom-app
+
+      - name: Build project
+        run: npm run build
+        working-directory: ./baskom-app
+
+  api-test:
+    name: API Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./baskom-api
+
+      - name: Build project
+        run: npm run build
+        working-directory: ./baskom-api
+
+      - name: Run API tests
+        run: npm run test
+        working-directory: ./baskom-api
