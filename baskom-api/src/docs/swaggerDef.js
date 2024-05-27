@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `${process.env.BASE_URL}/api/v1`,
+      url: `${process.env.BASE_URL}api/v1`,
     },
   ],
   components: {
