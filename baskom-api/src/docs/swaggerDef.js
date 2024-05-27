@@ -1,10 +1,5 @@
 require('dotenv').config();
 
-const protocol = process.env.PROTOCOL || 'http';
-const host = process.env.HOST || 'localhost';
-const port = process.env.PORT || 3000;
-const baseUrl = process.env.BASE_URL || `${protocol}://${host}:${port}`;
-
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
@@ -14,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `${baseUrl}/api/v1`,
+      url: `${process.env.BASE_URL}/api/v1`,
     },
   ],
   components: {
