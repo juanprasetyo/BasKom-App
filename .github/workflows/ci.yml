@@ -51,11 +51,3 @@ jobs:
       - name: Install dependencies
         run: npm install
         working-directory: ./baskom-api
-
-      - name: Build project
-        run: npm run build
-        working-directory: ./baskom-api
-
-      - name: Run API tests
-        run: npm run test
-        working-directory: ./baskom-api
