@@ -21,11 +21,6 @@ const swaggerDefinition = {
       },
     },
   },
-  security: [
-    {
-      BearerAuth: [],
-    },
-  ],
 };
 
 module.exports = swaggerDefinition;

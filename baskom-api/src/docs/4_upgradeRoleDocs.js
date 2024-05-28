@@ -41,6 +41,8 @@
  *   post:
  *     summary: Create a new upgrade role request
  *     tags: [Upgrade Roles]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -71,6 +73,8 @@
  *   put:
  *     summary: Update an upgrade role request
  *     tags: [Upgrade Roles]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -114,6 +118,8 @@
  *   get:
  *     summary: Get an upgrade role request by ID
  *     tags: [Upgrade Roles]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -140,6 +146,8 @@
  *   get:
  *     summary: Get all upgrade role requests
  *     tags: [Upgrade Roles]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: A list of all upgrade role requests.
@@ -159,6 +167,8 @@
  *   delete:
  *     summary: Delete an upgrade role request by ID
  *     tags: [Upgrade Roles]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

@@ -11,6 +11,8 @@
  *   post:
  *     summary: Add a role to a user
  *     tags: [User Roles]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -55,6 +57,8 @@
  *   delete:
  *     summary: Remove a role from a user
  *     tags: [User Roles]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
