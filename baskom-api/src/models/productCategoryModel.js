@@ -7,22 +7,6 @@ const addProductCategory = async (productId, categoryId) => {
   );
 };
 
-const findProductCategoriesByProductId = async (productId) => {
-  const result = await pool.query(
-    'SELECT * FROM product_categories WHERE product_id = $1',
-    [productId],
-  );
-  return result.rows;
-};
-
-const findProductCategoriesByCategoryId = async (categoryId) => {
-  const result = await pool.query(
-    'SELECT * FROM product_categories WHERE category_id = $1',
-    [categoryId],
-  );
-  return result.rows;
-};
-
 const deleteProductCategory = async (productId, categoryId) => {
   await pool.query(
     'DELETE FROM product_categories WHERE product_id = $1 AND category_id = $2',
@@ -32,7 +16,5 @@ const deleteProductCategory = async (productId, categoryId) => {
 
 module.exports = {
   addProductCategory,
-  findProductCategoriesByProductId,
-  findProductCategoriesByCategoryId,
   deleteProductCategory,
 };
