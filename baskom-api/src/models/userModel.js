@@ -100,24 +100,14 @@ const findUserByIdWithRole = async (id) => {
 };
 
 const updateUser = async (id, name, address, phoneNumber, avatar) => {
-  const user = await findUserById(id);
-  if (!user) {
-    return null;
-  }
-
   const updatedAt = new Date();
-  let newAvatar = avatar;
-
-  if (!avatar && name) {
-    newAvatar = `https://ui-avatars.com/api/?background=random&size=512&name=${encodeURIComponent(name)}`;
-  }
 
   const result = await pool.query(
     `UPDATE users
      SET name = $1, address = $2, phone_number = $3, avatar = $4, updated_at = $5
      WHERE id = $6
-     RETURNING *`,
-    [name, address, phoneNumber, newAvatar, updatedAt, id],
+     RETURNING id, name, email, address, phone_number, avatar, created_at, updated_at`,
+    [name, address, phoneNumber, avatar, updatedAt, id],
   );
 
   return result.rows[0];

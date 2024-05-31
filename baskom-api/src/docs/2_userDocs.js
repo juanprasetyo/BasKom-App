@@ -127,6 +127,12 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Missing required fields
+ *       409:
+ *         description: Email already in use
+ *       500:
+ *         description: Some server error
  */
 
 /**
@@ -166,8 +172,12 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Missing required fields
  *       404:
  *         description: User not found
+ *       500:
+ *         description: Some server error
  */
 
 /**
@@ -190,4 +200,6 @@
  *         description: User deleted
  *       404:
  *         description: User not found
+ *       500:
+ *         description: Some server error
  */

@@ -3,10 +3,6 @@ const { addUserRole, removeUserRole } = require('../models/userRolesModel');
 const addUserRoleHandler = async (req, res) => {
   const { userId, roleId } = req.body;
 
-  if (!userId || !roleId) {
-    return res.status(400).json({ message: 'User ID and Role ID are required' });
-  }
-
   try {
     const userRole = await addUserRole(userId, roleId);
     res.status(201).json(userRole);
@@ -17,10 +13,6 @@ const addUserRoleHandler = async (req, res) => {
 
 const removeUserRoleHandler = async (req, res) => {
   const { userId, roleId } = req.body;
-
-  if (!userId || !roleId) {
-    return res.status(400).json({ message: 'User ID and Role ID are required' });
-  }
 
   if (roleId === 1) {
     return res.status(400).json({ message: 'Default role cannot be removed' });
