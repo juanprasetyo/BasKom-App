@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerDefinition = require('./docs/swaggerDef');
@@ -25,6 +26,8 @@ const swaggerSpec = swaggerJsdoc(options);
 const app = express();
 app.use(express.json());
 app.use(passport.initialize());
+
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/v1', authRoutes);

@@ -95,7 +95,8 @@ const getUpgradeRoleByIdHandler = async (req, res) => {
     if (!upgradeRequest) {
       return res.status(404).json({ message: 'Upgrade request not found' });
     }
-    res.json(upgradeRequest);
+    const documentUrl = `${req.protocol}://${req.get('host')}${upgradeRequest.document_url}`;
+    res.json({ ...upgradeRequest, documentUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -104,7 +105,11 @@ const getUpgradeRoleByIdHandler = async (req, res) => {
 const getAllUpgradeRolesHandler = async (req, res) => {
   try {
     const upgradeRoles = await getAllUpgradeRoles();
-    res.json(upgradeRoles);
+    const upgradeRolesWithDocUrl = upgradeRoles.map((upgraderRole) => ({
+      ...upgraderRole,
+      documentUrl: `${req.protocol}://${req.get('host')}${upgraderRole.document_url}`,
+    }));
+    res.json(upgradeRolesWithDocUrl);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
