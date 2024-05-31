@@ -1,6 +1,9 @@
 const express = require('express');
-
-const router = express.Router();
+const { validate } = require('../helpers/validationHelper');
+const {
+  validateProductCreation,
+  validateProductUpdate,
+} = require('../validations/productValidations');
 const {
   addProductHandler,
   getAllProductsHandler,
@@ -9,15 +12,16 @@ const {
   updateProductHandler,
   deleteProductHandler,
 } = require('../controllers/productController');
-
 const auth = require('../middleware/auth');
 const hasRole = require('../middleware/role');
 
-router.post('/products', auth, hasRole('Penjual'), addProductHandler);
+const router = express.Router();
+
+router.post('/products', auth, hasRole('Penjual'), validate(validateProductCreation), addProductHandler);
 router.get('/products', getAllProductsHandler);
 router.get('/products/user', auth, hasRole('Penjual'), getAllProductsByUserIdHandler);
 router.get('/products/:id', getProductByIdHandler);
-router.put('/products/:id', auth, hasRole('Penjual'), updateProductHandler);
+router.put('/products/:id', auth, hasRole('Penjual'), validate(validateProductUpdate), updateProductHandler);
 router.delete('/products/:id', auth, hasRole('Penjual'), deleteProductHandler);
 
 module.exports = router;

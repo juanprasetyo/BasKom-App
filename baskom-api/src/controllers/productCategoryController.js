@@ -3,7 +3,7 @@ const {
   deleteProductCategory,
 } = require('../models/productCategoryModel');
 const { findProductById } = require('../models/productModel');
-const { findCategoryById } = require('../models/categoryModel');
+const { getCategoryById } = require('../models/categoryModel');
 
 const addProductCategoryHandler = async (req, res) => {
   const { id: userId } = req.user;
@@ -18,7 +18,7 @@ const addProductCategoryHandler = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized to modify this product' });
     }
 
-    const category = await findCategoryById(categoryId);
+    const category = await getCategoryById(categoryId);
     if (!category) {
       return res.status(404).json({ error: `Category with ID ${categoryId} not found` });
     }
@@ -43,7 +43,7 @@ const deleteProductCategoryHandler = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized to modify this product' });
     }
 
-    const category = await findCategoryById(categoryId);
+    const category = await getCategoryById(categoryId);
     if (!category) {
       return res.status(404).json({ error: `Category with ID ${categoryId} not found` });
     }

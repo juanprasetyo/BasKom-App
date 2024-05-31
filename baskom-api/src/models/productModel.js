@@ -6,7 +6,7 @@ const createProduct = async (productData) => {
   } = productData;
   const result = await pool.query(
     `INSERT INTO products (name, description, price, qty, user_id, deleted, created_at, updated_at)
-     VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), false) RETURNING *`,
+     VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW()) RETURNING *`,
     [name, description, price, qty, userId],
   );
   return result.rows[0];

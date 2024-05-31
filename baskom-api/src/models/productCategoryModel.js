@@ -1,10 +1,11 @@
 const pool = require('../config/db');
 
 const addProductCategory = async (productId, categoryId) => {
-  await pool.query(
-    'INSERT INTO product_categories (product_id, category_id, created_at, updated_at) VALUES ($1, $2, NOW(), NOW())',
+  const result = await pool.query(
+    'INSERT INTO product_categories (product_id, category_id, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING *',
     [productId, categoryId],
   );
+  return result.rows[0];
 };
 
 const deleteProductCategory = async (productId, categoryId) => {

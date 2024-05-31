@@ -45,31 +45,31 @@ const createUpgradeRoleHandler = async (req, res) => {
 };
 
 const updateUpgradeRoleHandler = async (req, res) => {
-  upload(req, res, async (err) => {
-    if (err) {
-      return res.status(400).json({ error: err.message });
+  const { id } = req.params;
+  const { id: userId } = req.user;
+
+  try {
+    const upgradeRole = await findUpgradeRoleById(id);
+    if (!upgradeRole) {
+      return res.status(404).json({ message: 'Upgrade role request not found' });
     }
 
-    const { id } = req.params;
-    const { id: userId } = req.user;
     const userRoles = await findRolesByUserId(userId);
     const userRoleNames = userRoles.map((role) => role.name);
 
-    try {
-      const upgradeRole = await findUpgradeRoleById(id);
+    if (userRoleNames.includes('Admin')) {
+      const { status } = req.body;
+      const updatedUpgradeRole = await updateUpgradeRoleStatus(id, status);
+      return res.status(200).json(updatedUpgradeRole);
+    }
 
-      if (!upgradeRole) {
-        return res.status(404).json({ message: 'Upgrade role request not found' });
-      }
+    if (upgradeRole.status === 'reject' || upgradeRole.status === 'accept') {
+      return res.status(400).json({ message: 'Cannot update document for rejected or accepted requests' });
+    }
 
-      if (userRoleNames.includes('Admin')) {
-        const { status } = req.body;
-        const updatedUpgradeRole = await updateUpgradeRoleStatus(id, status);
-        return res.status(200).json(updatedUpgradeRole);
-      }
-
-      if (upgradeRole.status === 'reject' || upgradeRole.status === 'accept') {
-        return res.status(400).json({ message: 'Cannot update document for rejected or accepted requests' });
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({ error: err.message });
       }
 
       if (req.file) {
@@ -81,10 +81,10 @@ const updateUpgradeRoleHandler = async (req, res) => {
       }
 
       res.status(400).json({ message: 'Invalid update request' });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const getUpgradeRoleByIdHandler = async (req, res) => {

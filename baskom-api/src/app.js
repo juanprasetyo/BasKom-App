@@ -11,6 +11,7 @@ const userRolesRoutes = require('./routes/userRolesRoutes');
 const upgradeRoleRoutes = require('./routes/upgradeRoleRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
+const productCategoryRoutes = require('./routes/productCategoryRoutes');
 
 dotenv.config();
 
@@ -32,5 +33,6 @@ app.use('/api/v1', userRolesRoutes);
 app.use('/api/v1', upgradeRoleRoutes);
 app.use('/api/v1', categoryRoutes);
 app.use('/api/v1', productRoutes);
+app.use('/api/v1', productCategoryRoutes);
 
 module.exports = app;

@@ -39,20 +39,28 @@
  *               properties:
  *                 user_id:
  *                   type: integer
+ *                   example: 1
  *                 role_id:
  *                   type: integer
+ *                   example: 2
  *                 created_at:
  *                   type: string
  *                   format: date-time
+ *                   example: "2024-05-30T13:45:30Z"
  *                 updated_at:
  *                   type: string
  *                   format: date-time
+ *                   example: "2024-05-30T13:45:30Z"
  *       400:
  *         description: Missing required fields
  *       403:
  *         description: Forbidden, You do not have the required permissions
  *       500:
  *         description: Server error
+ */
+
+/**
+ * @swagger
  * /user/roles/delete:
  *   delete:
  *     summary: Remove a role from a user

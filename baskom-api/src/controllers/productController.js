@@ -7,7 +7,7 @@ const {
   findProductsByUserId,
 } = require('../models/productModel');
 const { addProductCategory } = require('../models/productCategoryModel');
-const { validateCategories } = require('../helpers/categoryHelpers');
+const { validateCategories } = require('../utils/categoryUtil');
 
 const addProductHandler = async (req, res) => {
   const { id: userId } = req.user;

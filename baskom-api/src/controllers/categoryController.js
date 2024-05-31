@@ -9,6 +9,10 @@ const {
 const createCategoryHandler = async (req, res) => {
   const { name } = req.body;
 
+  if (!name) {
+    return res.status(400).json({ message: 'Name is required' });
+  }
+
   try {
     const category = await createCategory(name);
     res.status(201).json(category);
@@ -44,6 +48,10 @@ const updateCategoryHandler = async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
+  if (!name) {
+    return res.status(400).json({ message: 'Name is required' });
+  }
+
   try {
     const category = await getCategoryById(id);
     if (!category) {
@@ -67,7 +75,7 @@ const deleteCategoryHandler = async (req, res) => {
     }
 
     await deleteCategory(id);
-    res.status(204).json();
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
