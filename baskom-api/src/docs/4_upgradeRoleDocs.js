@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Upgrade Role:
+ *     UpgradeRole:
  *       type: object
  *       properties:
  *         id:
@@ -31,7 +31,7 @@
 /**
  * @swagger
  * tags:
- *   name: Upgrade Roles
+ *   name: Upgrade Role
  *   description: API to manage user upgrade roles.
  */
 
@@ -40,7 +40,7 @@
  * /upgrade-roles:
  *   post:
  *     summary: Create a new upgrade role request
- *     tags: [Upgrade Roles]
+ *     tags: [Upgrade Role]
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -60,7 +60,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Upgrade Role'
+ *               $ref: '#/components/schemas/UpgradeRole'
  *       400:
  *         description: Bad request.
  *       500:
@@ -72,7 +72,7 @@
  * /upgrade-roles/{id}:
  *   put:
  *     summary: Update an upgrade role request
- *     tags: [Upgrade Roles]
+ *     tags: [Upgrade Role]
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -117,7 +117,7 @@
  * /upgrade-roles/{id}:
  *   get:
  *     summary: Get an upgrade role request by ID
- *     tags: [Upgrade Roles]
+ *     tags: [Upgrade Role]
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -145,7 +145,7 @@
  * /upgrade-roles:
  *   get:
  *     summary: Get all upgrade role requests
- *     tags: [Upgrade Roles]
+ *     tags: [Upgrade Role]
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -166,7 +166,7 @@
  * /upgrade-roles/{id}:
  *   delete:
  *     summary: Delete an upgrade role request by ID
- *     tags: [Upgrade Roles]
+ *     tags: [Upgrade Role]
  *     security:
  *       - BearerAuth: []
  *     parameters:
