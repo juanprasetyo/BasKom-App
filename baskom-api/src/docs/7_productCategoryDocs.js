@@ -2,7 +2,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Product Category:
+ *     ProductCategory:
  *       type: object
  *       properties:
  *         product_id:
