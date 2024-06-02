@@ -255,7 +255,7 @@
  *               address:
  *                 type: string
  *                 example: "456 Another St, Springfield"
- *               phone_number:
+ *               phoneNumber:
  *                 type: string
  *                 example: "+6281234567890"
  *               avatar:

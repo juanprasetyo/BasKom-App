@@ -11,7 +11,7 @@ const validateUpdateUser = [
   body('name').notEmpty().withMessage('Name is required'),
   body('address').notEmpty().withMessage('Address is required'),
   body('phoneNumber')
-    .matches(/^\+628\d{8,10}$/)
+    .matches(/^\+62\d{10,12}$/)
     .withMessage('Phone number must start with +62 and followed by 10 to 12 digits'),
 ];
 
