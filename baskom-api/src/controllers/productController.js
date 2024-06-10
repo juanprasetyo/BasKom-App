@@ -4,6 +4,7 @@ const {
   updateProduct,
   softDeleteProduct,
   getAllProducts,
+  searchProducts,
   findProductsByUserId,
 } = require('../models/productModel');
 const { addProductCategory } = require('../models/productCategoryModel');
@@ -56,6 +57,30 @@ const getAllProductsByUserIdHandler = async (req, res) => {
   }
 };
 
+const searchProductsHandler = async (req, res) => {
+  const {
+    name, category, minPrice, maxPrice,
+  } = req.query;
+
+  try {
+    if (!name && !category && !minPrice && !maxPrice) {
+      return res.status(400).json({ error: 'At least one search parameter must be provided' });
+    }
+
+    const searchParams = {
+      name,
+      category,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+    };
+
+    const products = await searchProducts(searchParams);
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 const getProductByIdHandler = async (req, res) => {
   const { id } = req.params;
 
@@ -81,7 +106,7 @@ const updateProductHandler = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ message: 'Unauthorized to update this product' });
     }
 
@@ -102,7 +127,7 @@ const deleteProductHandler = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ message: 'Unauthorized to delete this product' });
     }
 
@@ -117,6 +142,7 @@ module.exports = {
   addProductHandler,
   getAllProductsHandler,
   getAllProductsByUserIdHandler,
+  searchProductsHandler,
   getProductByIdHandler,
   updateProductHandler,
   deleteProductHandler,

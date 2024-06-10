@@ -14,7 +14,7 @@ const uploadProductImagesHandler = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ error: 'Unauthorized to add images to this product' });
     }
 
@@ -47,7 +47,7 @@ const deleteProductImageHandler = async (req, res) => {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ error: 'Unauthorized to delete images from this product' });
     }
 

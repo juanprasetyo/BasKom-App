@@ -2,6 +2,43 @@
  * @swagger
  * components:
  *   schemas:
+ *     OwnerProduct:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The auto-generated ID of the user.
+ *           example: 1
+ *         name:
+ *           type: string
+ *           description: The name of the user.
+ *           example: "John Doe"
+ *         email:
+ *           type: string
+ *           description: The email of the user.
+ *           example: "johndoe@example.com"
+ *         address:
+ *           type: string
+ *           description: The address of the user.
+ *           example: "123 Main St, Springfield"
+ *         phone_number:
+ *           type: string
+ *           description: The phone number of the user.
+ *           example: "+6281234567890"
+ *         avatar:
+ *           type: string
+ *           description: The URL of the user's avatar.
+ *           example: "https://ui-avatars.com/api/?name=John+Doe"
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time when the user was created.
+ *           example: "2024-05-30T13:45:30Z"
+ *         updated_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time when the user was last updated.
+ *           example: "2024-05-30T13:45:30Z"
  *     Product:
  *       type: object
  *       required:
@@ -25,14 +62,17 @@
  *         qty:
  *           type: integer
  *           description: The quantity of the product.
- *         userId:
- *           type: integer
- *           description: The ID of the user who created the product.
- *         createdAt:
+ *         user:
+ *           $ref: '#/components/schemas/OwnerProduct'
+ *         categories:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Category'
+ *         created_at:
  *           type: string
  *           format: date-time
  *           description: The date and time when the product was created.
- *         updatedAt:
+ *         updated_at:
  *           type: string
  *           format: date-time
  *           description: The date and time when the product was last updated.
@@ -42,7 +82,7 @@
  * @swagger
  * tags:
  *   name: Products
- *   description: Product management
+ *   description: Product management APIs
  */
 
 /**
@@ -80,7 +120,7 @@
  *                 type: array
  *                 items:
  *                   type: integer
- *                   example: 1
+ *                 example: [1, 2, 3]
  *     responses:
  *       201:
  *         description: The created product
@@ -89,7 +129,7 @@
  *             schema:
  *               $ref: '#/components/schemas/Product'
  *       404:
- *         description: Categories not found
+ *         description: Category not found
  *         content:
  *           application/json:
  *             schema:
@@ -118,7 +158,7 @@
  *     tags: [Products]
  *     responses:
  *       200:
- *         description: A list of products
+ *         description: A list of all products
  *         content:
  *           application/json:
  *             schema:
@@ -147,13 +187,71 @@
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: A list of products by user
+ *         description: A list of products by the authenticated user
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Product'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+
+/**
+ * @swagger
+ * /products/search:
+ *   get:
+ *     summary: Search for products
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: The name of the product to search for
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: The category of the product to search for
+ *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: The minimum price of the product to search for
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: The maximum price of the product to search for
+ *     responses:
+ *       200:
+ *         description: A list of products matching the search criteria
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
+ *       400:
+ *         description: Invalid query parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "At least one search parameter must be provided"
  *       500:
  *         description: Server error
  *         content:
@@ -181,7 +279,7 @@
  *         description: The product ID
  *     responses:
  *       200:
- *         description: The product data
+ *         description: The product with the specified ID
  *         content:
  *           application/json:
  *             schema:
@@ -193,7 +291,7 @@
  *             schema:
  *               type: object
  *               properties:
- *                 error:
+ *                 message:
  *                   type: string
  *                   example: "Product not found"
  *       500:
@@ -298,7 +396,7 @@
  *         description: The product ID
  *     responses:
  *       204:
- *         description: Product deleted
+ *         description: No content
  *       403:
  *         description: Unauthorized to delete this product
  *         content:

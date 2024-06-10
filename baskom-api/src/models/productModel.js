@@ -6,7 +6,7 @@ const createProduct = async (productData) => {
   } = productData;
   const result = await pool.query(
     `INSERT INTO products (name, description, price, qty, user_id, deleted, created_at, updated_at)
-     VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW()) RETURNING *`,
+     VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW()) RETURNING id, name, description, price, qty, created_at, updated_at`,
     [name, description, price, qty, userId],
   );
   return result.rows[0];
@@ -14,9 +14,36 @@ const createProduct = async (productData) => {
 
 const findProductById = async (id) => {
   const result = await pool.query(
-    'SELECT * FROM products WHERE id = $1 AND deleted = false',
+    `SELECT p.id, p.name, p.description, p.price, p.qty,
+            json_build_object(
+              'id', u.id,
+              'name', u.name,
+              'address', u.address,
+              'phone_number', u.phone_number,
+              'avatar', u.avatar,
+              'created_at', u.created_at,
+              'updated_at', u.updated_at
+            ) AS user,
+            json_agg(json_build_object(
+              'id', c.id,
+              'name', c.name,
+              'created_at', c.created_at,
+              'updated_at', c.updated_at
+            )) AS categories,
+            p.created_at, p.updated_at
+     FROM products p
+     JOIN users u ON p.user_id = u.id
+     LEFT JOIN product_categories pc ON p.id = pc.product_id
+     LEFT JOIN categories c ON pc.category_id = c.id
+     WHERE p.id = $1 AND p.deleted = false
+     GROUP BY p.id, u.id`,
     [id],
   );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
   return result.rows[0];
 };
 
@@ -27,7 +54,7 @@ const updateProduct = async (id, productData) => {
   const result = await pool.query(
     `UPDATE products
      SET name = $1, description = $2, price = $3, qty = $4, updated_at = NOW()
-     WHERE id = $5 AND deleted = false RETURNING *`,
+     WHERE id = $5 AND deleted = false RETURNING id, name, description, price, qty, created_at, updated_at`,
     [name, description, price, qty, id],
   );
   return result.rows[0];
@@ -42,16 +69,117 @@ const softDeleteProduct = async (id) => {
 
 const getAllProducts = async () => {
   const result = await pool.query(
-    'SELECT * FROM products WHERE deleted = false',
+    `SELECT p.id, p.name, p.description, p.price, p.qty,
+            json_build_object(
+              'id', u.id,
+              'name', u.name,
+              'address', u.address,
+              'phone_number', u.phone_number,
+              'avatar', u.avatar,
+              'created_at', u.created_at,
+              'updated_at', u.updated_at
+            ) AS user,
+            json_agg(json_build_object(
+              'id', c.id,
+              'name', c.name,
+              'created_at', c.created_at,
+              'updated_at', c.updated_at
+            )) AS categories,
+            p.created_at, p.updated_at
+     FROM products p
+     JOIN users u ON p.user_id = u.id
+     LEFT JOIN product_categories pc ON p.id = pc.product_id
+     LEFT JOIN categories c ON pc.category_id = c.id
+     WHERE p.deleted = false AND p.qty > 0
+     GROUP BY p.id, u.id`,
   );
+
+  return result.rows;
+};
+
+const searchProducts = async (searchParams) => {
+  const {
+    name, category, minPrice, maxPrice,
+  } = searchParams;
+  let query = `SELECT p.id, p.name, p.description, p.price, p.qty,
+                      json_build_object(
+                        'id', u.id,
+                        'name', u.name,
+                        'address', u.address,
+                        'phone_number', u.phone_number,
+                        'avatar', u.avatar,
+                        'created_at', u.created_at,
+                        'updated_at', u.updated_at
+                      ) AS user,
+                      json_agg(json_build_object(
+                        'id', c.id,
+                        'name', c.name,
+                        'created_at', c.created_at,
+                        'updated_at', c.updated_at
+                      )) AS categories,
+                      p.created_at, p.updated_at
+               FROM products p
+               JOIN users u ON p.user_id = u.id
+               LEFT JOIN product_categories pc ON p.id = pc.product_id
+               LEFT JOIN categories c ON pc.category_id = c.id
+               WHERE p.deleted = false AND p.qty > 0`;
+  const queryParams = [];
+
+  if (name) {
+    queryParams.push(`%${name}%`);
+    query += ` AND p.name ILIKE $${queryParams.length}`;
+  }
+
+  if (category) {
+    queryParams.push(category);
+    query += ` AND c.name ILIKE $${queryParams.length}`;
+  }
+
+  if (minPrice) {
+    queryParams.push(minPrice);
+    query += ` AND p.price >= $${queryParams.length}`;
+  }
+
+  if (maxPrice) {
+    queryParams.push(maxPrice);
+    query += ` AND p.price <= $${queryParams.length}`;
+  }
+
+  query += ' GROUP BY p.id, u.id';
+
+  const result = await pool.query(query, queryParams);
+
   return result.rows;
 };
 
 const findProductsByUserId = async (userId) => {
   const result = await pool.query(
-    'SELECT * FROM products WHERE user_id = $1 AND deleted = false',
+    `SELECT p.id, p.name, p.description, p.price, p.qty,
+            json_build_object(
+              'id', u.id,
+              'name', u.name,
+              'address', u.address,
+              'phone_number', u.phone_number,
+              'avatar', u.avatar,
+              'created_at', u.created_at,
+              'updated_at', u.updated_at
+            ) AS user,
+            json_agg(json_build_object(
+              'id', c.id,
+              'name', c.name,
+              'created_at', c.created_at,
+              'updated_at', c.updated_at
+            )) AS categories,
+            p.created_at, p.updated_at
+     FROM products p
+     JOIN users u ON p.user_id = u.id
+     LEFT JOIN product_categories pc ON p.id = pc.product_id
+     LEFT JOIN categories c ON pc.category_id = c.id
+     WHERE p.user_id = $1 AND p.deleted = false
+     GROUP BY p.id, u.id`,
     [userId],
   );
+
   return result.rows;
 };
 
@@ -61,5 +189,6 @@ module.exports = {
   updateProduct,
   softDeleteProduct,
   getAllProducts,
+  searchProducts,
   findProductsByUserId,
 };

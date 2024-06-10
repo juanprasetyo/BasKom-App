@@ -14,7 +14,7 @@ const addProductCategoryHandler = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: `Product with ID ${productId} not found` });
     }
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ error: 'Unauthorized to modify this product' });
     }
 
@@ -39,7 +39,7 @@ const deleteProductCategoryHandler = async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: `Product with ID ${productId} not found` });
     }
-    if (product.user_id !== userId) {
+    if (product.user.id !== userId) {
       return res.status(403).json({ error: 'Unauthorized to modify this product' });
     }
 
