@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const cors = require('cors');
 const swaggerDefinition = require('./docs/swaggerDef');
 const passport = require('./config/passport');
 
@@ -18,6 +19,14 @@ const productImageRoutes = require('./routes/productImageRoutes');
 
 dotenv.config();
 
+const corsOptions = {
+  origin: (process.env.NODE_ENV === 'dev')
+    ? 'http://localhost:3000'
+    : ['https://admin-baskom.vercel.app', 'https://baskom.vercel.app'],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+};
+
 const options = {
   swaggerDefinition,
   apis: ['./src/docs/*.js'],
@@ -26,6 +35,7 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(passport.initialize());
 
