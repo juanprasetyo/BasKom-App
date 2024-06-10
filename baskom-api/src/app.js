@@ -22,7 +22,7 @@ dotenv.config();
 const corsOptions = {
   origin: (process.env.NODE_ENV === 'dev')
     ? 'http://localhost:3000'
-    : ['https://admin-baskom.vercel.app', 'https://baskom.vercel.app'],
+    : ['https://admin-baskom.vercel.app', 'https://baskom.vercel.app', 'http://localhost:5174', 'http://localhost:5173'],
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
