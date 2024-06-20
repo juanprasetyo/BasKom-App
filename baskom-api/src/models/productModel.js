@@ -15,7 +15,7 @@ const createProduct = async (productData) => {
 const findProductById = async (id) => {
   const result = await pool.query(
     `SELECT p.id, p.name, p.description, p.price, p.qty,
-            json_build_object(
+            jsonb_build_object(
               'id', u.id,
               'name', u.name,
               'address', u.address,
@@ -24,17 +24,30 @@ const findProductById = async (id) => {
               'created_at', u.created_at,
               'updated_at', u.updated_at
             ) AS user,
-            json_agg(json_build_object(
-              'id', c.id,
-              'name', c.name,
-              'created_at', c.created_at,
-              'updated_at', c.updated_at
-            )) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', c.id,
+                'name', c.name,
+                'created_at', c.created_at,
+                'updated_at', c.updated_at
+              )) FILTER (WHERE c.id IS NOT NULL), '[]'::jsonb
+            ) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', i.id,
+                'file_id', i.file_id,
+                'url', i.url,
+                'created_at', i.created_at,
+                'updated_at', i.updated_at
+              )) FILTER (WHERE i.id IS NOT NULL), '[]'::jsonb
+            ) AS images,
             p.created_at, p.updated_at
      FROM products p
      JOIN users u ON p.user_id = u.id
      LEFT JOIN product_categories pc ON p.id = pc.product_id
      LEFT JOIN categories c ON pc.category_id = c.id
+     LEFT JOIN product_images pi ON p.id = pi.product_id
+     LEFT JOIN images i ON pi.image_id = i.id
      WHERE p.id = $1 AND p.deleted = false
      GROUP BY p.id, u.id`,
     [id],
@@ -70,7 +83,7 @@ const softDeleteProduct = async (id) => {
 const getAllProducts = async () => {
   const result = await pool.query(
     `SELECT p.id, p.name, p.description, p.price, p.qty,
-            json_build_object(
+            jsonb_build_object(
               'id', u.id,
               'name', u.name,
               'address', u.address,
@@ -79,17 +92,30 @@ const getAllProducts = async () => {
               'created_at', u.created_at,
               'updated_at', u.updated_at
             ) AS user,
-            json_agg(json_build_object(
-              'id', c.id,
-              'name', c.name,
-              'created_at', c.created_at,
-              'updated_at', c.updated_at
-            )) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', c.id,
+                'name', c.name,
+                'created_at', c.created_at,
+                'updated_at', c.updated_at
+              )) FILTER (WHERE c.id IS NOT NULL), '[]'::jsonb
+            ) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', i.id,
+                'file_id', i.file_id,
+                'url', i.url,
+                'created_at', i.created_at,
+                'updated_at', i.updated_at
+              )) FILTER (WHERE i.id IS NOT NULL), '[]'::jsonb
+            ) AS images,
             p.created_at, p.updated_at
      FROM products p
      JOIN users u ON p.user_id = u.id
      LEFT JOIN product_categories pc ON p.id = pc.product_id
      LEFT JOIN categories c ON pc.category_id = c.id
+     LEFT JOIN product_images pi ON p.id = pi.product_id
+     LEFT JOIN images i ON pi.image_id = i.id
      WHERE p.deleted = false AND p.qty > 0
      GROUP BY p.id, u.id`,
   );
@@ -102,7 +128,7 @@ const searchProducts = async (searchParams) => {
     name, category, minPrice, maxPrice,
   } = searchParams;
   let query = `SELECT p.id, p.name, p.description, p.price, p.qty,
-                      json_build_object(
+                      jsonb_build_object(
                         'id', u.id,
                         'name', u.name,
                         'address', u.address,
@@ -111,17 +137,30 @@ const searchProducts = async (searchParams) => {
                         'created_at', u.created_at,
                         'updated_at', u.updated_at
                       ) AS user,
-                      json_agg(json_build_object(
-                        'id', c.id,
-                        'name', c.name,
-                        'created_at', c.created_at,
-                        'updated_at', c.updated_at
-                      )) AS categories,
+                      COALESCE(
+                        jsonb_agg(DISTINCT jsonb_build_object(
+                          'id', c.id,
+                          'name', c.name,
+                          'created_at', c.created_at,
+                          'updated_at', c.updated_at
+                        )) FILTER (WHERE c.id IS NOT NULL), '[]'::jsonb
+                      ) AS categories,
+                      COALESCE(
+                        jsonb_agg(DISTINCT jsonb_build_object(
+                          'id', i.id,
+                          'file_id', i.file_id,
+                          'url', i.url,
+                          'created_at', i.created_at,
+                          'updated_at', i.updated_at
+                        )) FILTER (WHERE i.id IS NOT NULL), '[]'::jsonb
+                      ) AS images,
                       p.created_at, p.updated_at
                FROM products p
                JOIN users u ON p.user_id = u.id
                LEFT JOIN product_categories pc ON p.id = pc.product_id
                LEFT JOIN categories c ON pc.category_id = c.id
+               LEFT JOIN product_images pi ON p.id = pi.product_id
+               LEFT JOIN images i ON pi.image_id = i.id
                WHERE p.deleted = false AND p.qty > 0`;
   const queryParams = [];
 
@@ -155,7 +194,7 @@ const searchProducts = async (searchParams) => {
 const findProductsByUserId = async (userId) => {
   const result = await pool.query(
     `SELECT p.id, p.name, p.description, p.price, p.qty,
-            json_build_object(
+            jsonb_build_object(
               'id', u.id,
               'name', u.name,
               'address', u.address,
@@ -164,17 +203,30 @@ const findProductsByUserId = async (userId) => {
               'created_at', u.created_at,
               'updated_at', u.updated_at
             ) AS user,
-            json_agg(json_build_object(
-              'id', c.id,
-              'name', c.name,
-              'created_at', c.created_at,
-              'updated_at', c.updated_at
-            )) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', c.id,
+                'name', c.name,
+                'created_at', c.created_at,
+                'updated_at', c.updated_at
+              )) FILTER (WHERE c.id IS NOT NULL), '[]'::jsonb
+            ) AS categories,
+            COALESCE(
+              jsonb_agg(DISTINCT jsonb_build_object(
+                'id', i.id,
+                'file_id', i.file_id,
+                'url', i.url,
+                'created_at', i.created_at,
+                'updated_at', i.updated_at
+              )) FILTER (WHERE i.id IS NOT NULL), '[]'::jsonb
+            ) AS images,
             p.created_at, p.updated_at
      FROM products p
      JOIN users u ON p.user_id = u.id
      LEFT JOIN product_categories pc ON p.id = pc.product_id
      LEFT JOIN categories c ON pc.category_id = c.id
+     LEFT JOIN product_images pi ON p.id = pi.product_id
+     LEFT JOIN images i ON pi.image_id = i.id
      WHERE p.user_id = $1 AND p.deleted = false
      GROUP BY p.id, u.id`,
     [userId],
