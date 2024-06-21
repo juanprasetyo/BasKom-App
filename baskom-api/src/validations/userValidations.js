@@ -10,9 +10,10 @@ const validateUpdateUser = [
   param('id').isInt().withMessage('Invalid user ID'),
   body('name').notEmpty().withMessage('Name is required'),
   body('address').notEmpty().withMessage('Address is required'),
-  body('phoneNumber')
-    .matches(/^\+62\d{10,12}$/)
-    .withMessage('Phone number must start with +62 and followed by 10 to 12 digits'),
+  body('phoneNumber').notEmpty().withMessage('Phone Number is required'),
+  // body('phoneNumber')
+  //   .matches(/^\+62\d{10,12}$/)
+  //   .withMessage('Phone number must start with +62 and followed by 10 to 12 digits'),
 ];
 
 module.exports = {
